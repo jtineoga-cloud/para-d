@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Dayli ❤️</title>
+    <style>
+        body {
+            margin: 0; padding: 0; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background: linear-gradient(135deg, #ffe6f2 0%, #ffcce6 100%);
+            font-family: 'Arial', sans-serif; overflow: hidden;
+            position: relative; touch-action: none;
+        }
+
+        /* --- PANTALLA DE INICIO (OVERLAY) --- */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffe6f2; z-index: 200;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s ease;
+        }
+
+        .start-btn {
+            padding: 20px 40px; font-size: 1.5rem; background: #ff6b81;
+            color: white; border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255, 107, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        /* --- FONDO MÁGICO --- */
+        body::before {
+            content: ""; position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 80%);
+            filter: blur(60px); opacity: 0.5; z-index: 0;
+        }
+
+        .flower, .floating-text { position: absolute; user-select: none; pointer-events: none; z-index: 1; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+        @keyframes fadeInOut { 0% { opacity: 0; } 50% { opacity: 0.3; } 100% { opacity: 0; } }
+
+        /* --- TARJETA PRINCIPAL --- */
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            width: 90%; max-width: 450px;
+            padding: 25px; border-radius: 30px;
+            border: 2px solid rgba(255, 107, 129, 0.3);
+            box-shadow: 0 0 30px rgba(255, 107, 129, 0.2);
+            text-align: center; position: relative; z-index: 10;
+            backdrop-filter: blur(10px); display: none; /* Se activa al dar click */
+        }
+
+        .step { display: none; }
+        .step.active { display: block; animation: fadeIn 0.8s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .main-img { width: 100%; height: 260px; object-fit: cover; border-radius: 20px; margin-bottom: 15px; }
+
+        /* --- CUBO 3D --- */
+        #final-scene { display: flex; flex-direction: column; align-items: center; perspective: 1000px; }
+        .cube-container {
+            width: 170px; height: 170px; position: relative;
+            transform-style: preserve-3d; transform: rotateX(-15deg) rotateY(-15deg);
+            transition: transform 0.1s ease-out; margin: 25px 0;
+        }
+        .cube-face {
+            position: absolute; width: 100%; height: 100%; border-radius: 10px;
+            object-fit: cover; border: 2px solid white; background: white;
+        }
+        .front { transform: rotateY(0deg) translateZ(85px); }
+        .right { transform: rotateY(90deg) translateZ(85px); }
+        .back { transform: rotateY(180deg) translateZ(85px); }
+        .left { transform: rotateY(-90deg) translateZ(85px); }
+        .top { transform: rotateX(90deg) translateZ(85px); }
+        .bottom { transform: rotateX(-90deg) translateZ(85px); }
+        .extra { transform: rotateY(45deg) translateZ(40px); opacity: 0.6; scale: 0.7; }
+
+        button.next-btn {
+            background: #ff6b81; color: white; border: none;
+            padding: 12px 25px; border-radius: 25px; cursor: pointer;
+            font-weight: bold; box-shadow: 0 5px 15px rgba(255, 107, 129, 0.3);
+        }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        h2 { color: #d63031; margin: 10px 0; }
+        p { color: #555; font-size: 0.95rem; }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <h1 style="color: #ff6b81; margin-bottom: 30px;">Para: Dayli ❤️</h1>
+        <button class="start-btn" onclick="iniciar()">Toca para empezar 🎁</button>
+    </div>
+
+    <audio id="miMusica" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="garden"></div>
+
+    <div class="card" id="mainCard">
+        <div class="step active" id="p0">
+            <img src="imagenes/imagen1.png" class="main-img">
+            <p>Todo empezó por redes sociales... hablando y conociendo a alguien increíble como tú. ❤️</p>
+            <button class="next-btn" onclick="ir(1)">Siguiente ❤️</button>
+        </div>
+
+        <div class="step" id="p1">
+            <img src="imagenes/imagen2.png" class="main-img">
+            <p>Luego nos vimos en persona... ese momento lo cambió todo y supe que eras tú.</p>
+            <button class="next-btn" onclick="ir(2)">Siguiente ❤️</button>
+        </div>
+
+        <div class="step" id="p2">
+            <img src="imagenes/imagen3.png" class="main-img">
+            <p>¡Nuestro primer beso! El momento más lindo y especial de todo mi año. 💋</p>
+            <button class="next-btn" onclick="ir(3)">Ver sorpresa final ❤️</button>
+        </div>
+
+        <div class="step" id="p3">
+            <div id="final-scene">
+                <div class="cube-container" id="cube">
+                    <img src="imagenes/d-1.jpg" class="cube-face front">
+                    <img src="imagenes/d-2.jpg" class="cube-face right">
+                    <img src="imagenes/d-3.jpg" class="cube-face back">
+                    <img src="imagenes/d-4.jpg" class="cube-face left">
+                    <img src="imagenes/d-5.jpg" class="cube-face top">
+                    <img src="imagenes/d-6.jpg" class="cube-face bottom">
+                    <img src="imagenes/d-7.jpg" class="cube-face extra">
+                </div>
+                <h2>¡Te amo Dayli!</h2>
+                <p>Eres lo mejor que me ha pasado. Quisiera ser feliz siempre a tu lado.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function iniciar() {
+            // 1. Iniciar música
+            const music = document.getElementById('miMusica');
+            music.play();
+
+            // 2. Ocultar pantalla de inicio
+            const overlay = document.getElementById('overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                document.getElementById('mainCard').style.display = 'block';
+                iniciarEfectos(); // Lanzar flores y mensajes
+            }, 1000);
+        }
+
+        function ir(n) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('p' + n).classList.add('active');
+        }
+
+        function iniciarEfectos() {
+            // --- MENSAJES FLOTANTES ---
+            const frases = ["❤️", "✨", "Siempre", "Dayli", "Tú y Yo", "Love"];
+            setInterval(() => {
+                const span = document.createElement("span");
+                span.className = "floating-text";
+                span.innerText = frases[Math.floor(Math.random() * frases.length)];
+                span.style.left = Math.random() * 100 + "vw";
+                span.style.top = Math.random() * 100 + "vh";
+                span.style.color = "#ff6b81";
+                span.style.fontSize = Math.random() * 20 + 10 + "px";
+                span.style.animation = "fadeInOut 4s forwards";
+                document.body.appendChild(span);
+                setTimeout(() => span.remove(), 4000);
+            }, 2000);
+
+            // --- FLORES ---
+            const garden = document.getElementById('garden');
+            const flores = ['🌹', '🌷', '🌸', '💖'];
+            for (let i = 0; i < 30; i++) {
+                let f = document.createElement('div');
+                f.className = 'flower';
+                f.innerText = flores[Math.floor(Math.random() * flores.length)];
+                f.style.left = Math.random() * 100 + "vw";
+                f.style.top = "-50px";
+                f.style.animation = `fall ${Math.random() * 3 + 2}s linear infinite`;
+                f.style.animationDelay = Math.random() * 5 + 's';
+                f.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                garden.appendChild(f);
+            }
+        }
+
+        // --- CONTROL DEL CUBO ---
+        const cube = document.getElementById('cube');
+        let isDragging = false, startX, startY, rotateX = -15, rotateY = -15;
+
+        const start = (e) => { isDragging = true; startX = e.pageX || e.touches[0].pageX; startY = e.pageY || e.touches[0].pageY; };
+        const move = (e) => {
+            if (!isDragging) return;
+            const x = e.pageX || e.touches[0].pageX, y = e.pageY || e.touches[0].pageY;
+            rotateY += (x - startX) * 0.5; rotateX -= (y - startY) * 0.5;
+            cube.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            startX = x; startY = y;
+        };
+
+        document.body.addEventListener('mousedown', start);
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', () => isDragging = false);
+        document.body.addEventListener('touchstart', start);
+        window.addEventListener('touchmove', move);
+        window.addEventListener('touchend', () => isDragging = false);
+    </script>
+</body>
+</html>
